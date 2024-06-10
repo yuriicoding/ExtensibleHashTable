@@ -1,21 +1,31 @@
 #ifndef EXTENSIBLEHASHTABLE_H
 #define EXTENSIBLEHASHTABLE_H
 
-class ExtensibleHashTable{
+#include "Bucket.h"
+#include <vector>
+#include <iostream>
 
-    ExtensibleHashTable();
+class ExtensibleHashTable {
+public:
+    ExtensibleHashTable(int bucketSize = 4);
+    ExtensibleHashTable(const ExtensibleHashTable& other);
+    ExtensibleHashTable& operator=(const ExtensibleHashTable& other);
+    ~ExtensibleHashTable();
 
-    ExtensibleHashTable(int key_per_bucket);
-
-    bool find(int key);
-
+    bool find(int key) const;
     void insert(int key);
-
     bool remove(int key);
+    void print() const;
 
-    void print();
+private:
+    std::vector<Bucket*> directory;
+    int globalDepth;
+    int bucketSize;
+
+    int hash(int key) const;
+    void splitBucket(int bucketIndex);
+    void doubleDirectory();
 };
-
 
 
 #endif
