@@ -13,6 +13,8 @@ ExtensibleHashTable::ExtensibleHashTable(int bucketSize)
 
 };
 
+
+
 ExtensibleHashTable::~ExtensibleHashTable() {
 
     vector<bool> deleted(directory.size(), false);
@@ -30,6 +32,8 @@ ExtensibleHashTable::~ExtensibleHashTable() {
     }
 };
 
+
+
 ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other) {
     bucketSize = other.bucketSize;
     globalDepth = other.globalDepth;
@@ -38,6 +42,8 @@ ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other) {
         directory[i] = new Bucket(*other.directory[i]);
     }
 };
+
+
 
 ExtensibleHashTable& ExtensibleHashTable::operator=(const ExtensibleHashTable& other) {
     if (this != &other) {
@@ -56,9 +62,13 @@ ExtensibleHashTable& ExtensibleHashTable::operator=(const ExtensibleHashTable& o
     return *this;
 }
 
+
+
 int ExtensibleHashTable::hash(int key) const {
     return key & ((1 << globalDepth) - 1);
 }
+
+
 
 void ExtensibleHashTable::insert(int key) {
     int index = hash(key);
@@ -77,6 +87,8 @@ void ExtensibleHashTable::insert(int key) {
     insert(key); //retry insersion recursively
 }
 
+
+
 void ExtensibleHashTable::doubleDirectory() {
     int currentSize = directory.size();
     directory.resize(currentSize * 2);
@@ -85,6 +97,8 @@ void ExtensibleHashTable::doubleDirectory() {
     }
     ++globalDepth;
 }
+
+
 
 void ExtensibleHashTable::splitBucket(int index) {
 
@@ -116,19 +130,27 @@ void ExtensibleHashTable::splitBucket(int index) {
     }
 }
 
+
+
 bool ExtensibleHashTable::find(int key) const {
     int index = hash(key);
     return directory[index]->contains(key);
 }
+
+
 
 bool ExtensibleHashTable::remove(int key) {
     int index = hash(key);
     return directory[index]->removeKey(key);
 }
 
+
+
 int ExtensibleHashTable::getGlobal() const{
     return globalDepth;
 }
+
+
 
 void ExtensibleHashTable::print() const {
     vector<bool> printed(directory.size(), false);

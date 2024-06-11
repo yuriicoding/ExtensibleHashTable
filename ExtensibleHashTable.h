@@ -4,6 +4,7 @@
 #include "Bucket.h"
 #include <vector>
 #include <iostream>
+using namespace std;
 
 class ExtensibleHashTable {
 public:
@@ -19,7 +20,7 @@ public:
     int getGlobal() const;
 
 private:
-    std::vector<Bucket*> directory;
+    vector<Bucket*> directory;
     int globalDepth;
     int bucketSize;
 

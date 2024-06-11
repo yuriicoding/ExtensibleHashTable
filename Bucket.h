@@ -2,6 +2,7 @@
 #define BUCKET_H
 
 #include <vector>
+using namespace std;
 
 class Bucket {
 public:
@@ -15,11 +16,10 @@ public:
     void clearBucket();
     int getLocalDepth() const;
     void increaseDepth();
-    void decreaseDepth();
-    std::vector<int> getKeys() const;
+    vector<int> getKeys() const;
 
 private:
-    std::vector<int> keys;
+    vector<int> keys;
     int localDepth;
     int bucketSize;
 };
