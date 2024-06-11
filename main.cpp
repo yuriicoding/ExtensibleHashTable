@@ -10,7 +10,7 @@ int main() {
 
     // Test Insertions
     std::cout << "Inserting values..." << std::endl;
-    for (int i = 0; i < 20; ++i) {
+    for (int i = 0; i < 9; ++i) {
         hashTable.insert(i * 5);
     }
 
@@ -38,9 +38,16 @@ int main() {
 
     // Test inserting after removals to see if freed space is reused
     std::cout << "Inserting 101 and 102..." << std::endl;
+    std::cout << "Global depth: " << hashTable.getGlobal() << std::endl;
+    std::cout << "----------------------------------------" << std::endl;
     hashTable.insert(101);
-    hashTable.insert(102);
+    std::cout << "Global depth: " << hashTable.getGlobal() << std::endl;
     hashTable.print();
+    std::cout << "----------------------------------------" << std::endl;
+    hashTable.insert(102);
+    std::cout << "Global depth: " << hashTable.getGlobal() << std::endl;
+    hashTable.print();
+    std::cout << "----------------------------------------" << std::endl;
 
     // Edge Case Testing
     std::cout << "Edge cases testing:" << std::endl;

@@ -1,11 +1,8 @@
 #include "Bucket.h"
 #include <algorithm>
+using namespace std;
 
-Bucket::Bucket(int size) : localDepth(0), bucketSize(size) {}
-
-Bucket::~Bucket() {
-    clear();
-}
+Bucket::Bucket(int size) : localDepth(1), bucketSize(size) {}
 
 bool Bucket::isFull() const {
     return keys.size() >= bucketSize;
@@ -16,7 +13,7 @@ bool Bucket::isEmpty() const {
 }
 
 bool Bucket::contains(int key) const {
-    return std::find(keys.begin(), keys.end(), key) != keys.end();
+    return find(keys.begin(), keys.end(), key) != keys.end();
 }
 
 void Bucket::insert(int key) {
@@ -25,14 +22,24 @@ void Bucket::insert(int key) {
     }
 }
 
-bool Bucket::remove(int key) {
-    auto it = std::remove(keys.begin(), keys.end(), key);
-    bool found = it != keys.end();
+bool Bucket::removeKey(int key) {
+
+    //could use auto!
+    vector<int>::iterator it = remove(keys.begin(), keys.end(), key);
+
+    bool found;
+    if (it != keys.end()){
+        found = true;
+    }
+    else{
+        found = false;
+    }
     keys.erase(it, keys.end());
+
     return found;
 }
 
-void Bucket::clear() {
+void Bucket::clearBucket() {
     keys.clear();
 }
 
@@ -48,6 +55,6 @@ void Bucket::decreaseDepth() {
     if (localDepth > 0) --localDepth;
 }
 
-std::vector<int> Bucket::getKeys() const {
+vector<int> Bucket::getKeys() const {
     return keys;
 }

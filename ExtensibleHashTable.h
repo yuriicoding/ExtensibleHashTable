@@ -16,6 +16,7 @@ public:
     void insert(int key);
     bool remove(int key);
     void print() const;
+    int getGlobal() const;
 
 private:
     std::vector<Bucket*> directory;
