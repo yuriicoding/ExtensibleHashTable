@@ -127,14 +127,16 @@ void ExtensibleHashTable::splitBucket(int index) {
 
     directory[startIndex + localDepthPower] = newBucket;
 
-    for (int i = startIndex; i < directory.size(); i += localDepthPower * 2) {
+    for (size_t i = startIndex; i < directory.size(); i += localDepthPower * 2) {
         directory[i + localDepthPower] = newBucket;
     }
 
     vector<int> oldKeys = directory[startIndex]->getKeys();
     directory[startIndex]->clearBucket();
 
-    for (int key : oldKeys) {
+    
+    for (size_t i = 0; i < oldKeys.size(); ++i) {
+        int key = oldKeys[i];
         int newIndex = hash(key);
         directory[newIndex]->insertKey(key);
     }
@@ -200,7 +202,7 @@ void ExtensibleHashTable::printCheck() const {
                 cout << bitset<8>(keys[j]);
             }
 
-            for (size_t k = keys.size(); k < bucketSize; ++k) {
+            for (int k = keys.size(); k < bucketSize; ++k) {
                 if (k == 0) cout << " - ";
                 else cout << ", - ";
             }

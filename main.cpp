@@ -6,11 +6,7 @@ using namespace std;
 int main() {
     ExtensibleHashTable hashTable(2);  // Initialize with bucket size of 4
 
-    // Test Insertions
-    cout << "Inserting values..." << endl;
-    // for (int i = 0; i < 5; ++i) {
-    //     hashTable.insert(i);
-    // }
+    //Special test for double split, that happens after 30 is inserted
     hashTable.insert(1);
     cout << "Global depth: " << hashTable.getGlobal() << endl;
     hashTable.printCheck();
@@ -33,6 +29,12 @@ int main() {
     cout << "Global depth: " << hashTable.getGlobal() << endl;
     hashTable.printCheck();
 
+
+    // Test Insertions
+    //cout << "Inserting values..." << endl;
+    // for (int i = 0; i < 5; ++i) {
+    //     hashTable.insert(i);
+    // }
     // // Print current state of the hash table
     // hashTable.print();
     // cout << "----------------------------------------" << endl;

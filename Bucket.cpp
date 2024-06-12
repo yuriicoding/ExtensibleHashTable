@@ -7,7 +7,8 @@ Bucket::Bucket(int size) : localDepth(1), bucketSize(size) {};
 
 
 bool Bucket::isFull() const {
-    return keys.size() >= bucketSize;
+    size_t bucketSizeUnsigned = bucketSize;
+    return keys.size() >= bucketSizeUnsigned;
 }
 
 
