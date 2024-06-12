@@ -17,6 +17,8 @@ public:
     void insert(int key);
     bool remove(int key);
     void print() const;
+
+    void printCheck() const;
     int getGlobal() const;
 
 private:
@@ -27,6 +29,7 @@ private:
     int hash(int key) const;
     void splitBucket(int bucketIndex);
     void doubleDirectory();
+    void clearDirectory();
 };
 
 

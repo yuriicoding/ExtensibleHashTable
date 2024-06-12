@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 #include <bitset>
+#include <algorithm>
 using namespace std;
 
 ExtensibleHashTable::ExtensibleHashTable(int bucketSize)
@@ -16,7 +17,12 @@ ExtensibleHashTable::ExtensibleHashTable(int bucketSize)
 
 
 ExtensibleHashTable::~ExtensibleHashTable() {
+    clearDirectory();
+};
 
+
+
+void ExtensibleHashTable::clearDirectory(){
     vector<bool> deleted(directory.size(), false);
     for (size_t i = 0; i < directory.size(); ++i) {
         if (!deleted[i]) {
@@ -26,11 +32,10 @@ ExtensibleHashTable::~ExtensibleHashTable() {
                     deleted[j] = true;
                 }
             }
-
             delete directory[i];
         }
     }
-};
+}
 
 
 
@@ -47,9 +52,9 @@ ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other) {
 
 ExtensibleHashTable& ExtensibleHashTable::operator=(const ExtensibleHashTable& other) {
     if (this != &other) {
-        for (auto bucket : directory) {
-            delete bucket;
-        }
+
+        clearDirectory();
+        
         directory.clear();
 
         bucketSize = other.bucketSize;
@@ -75,7 +80,7 @@ void ExtensibleHashTable::insert(int key) {
     Bucket* targetBucket = directory[index];
 
     if (!targetBucket->isFull()) {
-        targetBucket->insert(key);
+        targetBucket->insertKey(key);
         return;
     }
 
@@ -116,6 +121,7 @@ void ExtensibleHashTable::splitBucket(int index) {
     for (int i = 0; i < current_local_depth; ++i){
         newBucket->increaseDepth();
     }
+
     //increase depth once for current bucket
     directory[index]->increaseDepth();
 
@@ -126,7 +132,7 @@ void ExtensibleHashTable::splitBucket(int index) {
 
     for (int key : oldKeys) {
         int newIndex = hash(key);
-        directory[newIndex]->insert(key);
+        directory[newIndex]->insertKey(key);
     }
 }
 
@@ -157,11 +163,11 @@ void ExtensibleHashTable::print() const {
     for (size_t i = 0; i < directory.size(); ++i) {
         if (!printed[i]) {
 
-            cout << bitset<8>(i) << ": " << directory[i] << " --> [";
+            cout << i << ": " << directory[i] << " --> [";
             vector<int> keys = directory[i]->getKeys();
             for (size_t j = 0; j < keys.size(); ++j) {
                 if (j > 0) cout << ", ";
-                cout << bitset<8>(keys[j]);
+                cout << keys[j];
             }
             cout << "] (" << directory[i]->getLocalDepth() << ")\n";
 
@@ -175,3 +181,36 @@ void ExtensibleHashTable::print() const {
     }
 }
 
+
+
+void ExtensibleHashTable::printCheck() const {
+    vector<bool> printed(directory.size(), false);
+    for (size_t i = 0; i < directory.size(); ++i) {
+        if (!printed[i]) {
+
+            cout << bitset<8>(i) << ": " << directory[i] << " --> [";
+            vector<int> keys = directory[i]->getKeys();
+            size_t j;
+            for (j = 0; j < keys.size(); ++j) {
+                if (j > 0) cout << ", ";
+                cout << bitset<8>(keys[j]);
+            }
+
+            for (size_t k = keys.size(); k < bucketSize; ++k) {
+                if (k == 0) cout << " - ";
+                else cout << ", - ";
+            }
+            cout << "] (" << directory[i]->getLocalDepth() << ")\n";
+
+
+            for (size_t j = i; j < directory.size(); ++j) {
+                if (directory[j] == directory[i]) {
+                    printed[j] = true;
+                }
+            }
+        }
+        else {
+            cout << bitset<8>(i) << ": " << directory[i] << " --> \n";
+        }
+    }
+}

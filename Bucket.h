@@ -11,7 +11,7 @@ public:
     bool isFull() const;
     bool isEmpty() const;
     bool contains(int key) const;
-    void insert(int key);
+    void insertKey(int key);
     bool removeKey(int key);
     void clearBucket();
     int getLocalDepth() const;

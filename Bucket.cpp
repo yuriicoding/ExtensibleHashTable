@@ -24,7 +24,7 @@ bool Bucket::contains(int key) const {
 
 
 
-void Bucket::insert(int key) {
+void Bucket::insertKey(int key) {
     if (!isFull()) {
         keys.push_back(key);
     }
