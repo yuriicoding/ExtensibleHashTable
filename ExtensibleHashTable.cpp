@@ -108,17 +108,17 @@ void ExtensibleHashTable::doubleDirectory() {
 void ExtensibleHashTable::splitBucket(int index) {
 
     //splitting directory local depth
-    int current_local_depth = directory[index]->getLocalDepth();
+    int indexLocalDepth = directory[index]->getLocalDepth();
 
     //how many bits of index to use, to find first bucket, where split starts
-    int localDepthPower = 1 << (current_local_depth);
+    int localDepthPower = 1 << (indexLocalDepth);
     
     //bucket where split starts
     int startIndex = index & (localDepthPower - 1);
 
     Bucket* newBucket = new Bucket(bucketSize);
 
-    for (int i = 0; i < current_local_depth; ++i){
+    for (int i = 0; i < indexLocalDepth; ++i){
         newBucket->increaseDepth();
     }
 
