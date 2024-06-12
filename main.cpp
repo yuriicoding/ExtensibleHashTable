@@ -12,14 +12,26 @@ int main() {
     //     hashTable.insert(i);
     // }
     hashTable.insert(1);
-    hashTable.insert(5);
-    hashTable.insert(13);
-    hashTable.insert(29);
-    hashTable.insert(28);
-    hashTable.insert(20);
-    hashTable.insert(30);
-
     cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
+    hashTable.insert(5);
+    cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
+    hashTable.insert(13);
+    cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
+    hashTable.insert(29);
+    cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
+    hashTable.insert(28);
+    cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
+    hashTable.insert(20);
+    cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
+    hashTable.insert(30);
+    cout << "Global depth: " << hashTable.getGlobal() << endl;
+    hashTable.printCheck();
 
     // // Print current state of the hash table
     // hashTable.print();
@@ -67,7 +79,7 @@ int main() {
     //     cout << "Caught runtime error as expected with message: " << e.what() << endl;
     // }
 
-    hashTable.printCheck();
+    // hashTable.printCheck();
 
     return 0;
 }

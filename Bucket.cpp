@@ -7,7 +7,7 @@ Bucket::Bucket(int size) : localDepth(1), bucketSize(size) {};
 
 
 bool Bucket::isFull() const {
-    return static_cast <long int> (keys.size()) >= bucketSize;
+    return keys.size() >= bucketSize;
 }
 
 
@@ -71,4 +71,8 @@ void Bucket::increaseDepth() {
 
 vector<int> Bucket::getKeys() const {
     return keys;
+}
+
+int Bucket::getBucketSize() const {
+    return keys.size();
 }

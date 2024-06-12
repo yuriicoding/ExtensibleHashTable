@@ -15,6 +15,7 @@ public:
     bool removeKey(int key);
     void clearBucket();
     int getLocalDepth() const;
+    int getBucketSize() const;
     void increaseDepth();
     vector<int> getKeys() const;
 

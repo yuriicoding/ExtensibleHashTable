@@ -127,6 +127,10 @@ void ExtensibleHashTable::splitBucket(int index) {
 
     directory[startIndex + localDepthPower] = newBucket;
 
+    for (int i = startIndex; i < directory.size(); i += localDepthPower * 2) {
+        directory[i + localDepthPower] = newBucket;
+    }
+
     vector<int> oldKeys = directory[startIndex]->getKeys();
     directory[startIndex]->clearBucket();
 
