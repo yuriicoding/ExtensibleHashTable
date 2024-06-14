@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <bitset>
 #include <algorithm>
+#include <unordered_map>
 using namespace std;
 
 ExtensibleHashTable::ExtensibleHashTable(int bucketSize)
@@ -39,14 +40,24 @@ void ExtensibleHashTable::clearDirectory(){
 
 
 
-ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other) {
-    bucketSize = other.bucketSize;
+ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other){
+    directory.resize(other.directory.size(), nullptr);
     globalDepth = other.globalDepth;
-    directory.resize(other.directory.size());
-    for (size_t i = 0; i < directory.size(); ++i) {
-        directory[i] = new Bucket(*other.directory[i]);
+    bucketSize = other.bucketSize;
+    
+    vector<Bucket*> newBuckets(other.directory.size(), nullptr);
+
+    unordered_map<Bucket*, Bucket*> bucketMap;
+
+    for (size_t i = 0; i < other.directory.size(); ++i) {
+        if (other.directory[i] && bucketMap.find(other.directory[i]) == bucketMap.end()) {
+            newBuckets[i] = new Bucket(*other.directory[i]);
+            bucketMap[other.directory[i]] = newBuckets[i];
+        }
+        directory[i] = bucketMap[other.directory[i]];
     }
-};
+}
+
 
 
 
@@ -57,11 +68,20 @@ ExtensibleHashTable& ExtensibleHashTable::operator=(const ExtensibleHashTable& o
         
         directory.clear();
 
-        bucketSize = other.bucketSize;
+        directory.resize(other.directory.size(), nullptr);
         globalDepth = other.globalDepth;
-        directory.resize(other.directory.size());
-        for (size_t i = 0; i < directory.size(); ++i) {
-            directory[i] = new Bucket(*other.directory[i]);
+        bucketSize = other.bucketSize;
+        
+        vector<Bucket*> newBuckets(other.directory.size(), nullptr);
+
+        unordered_map<Bucket*, Bucket*> bucketMap;
+
+        for (size_t i = 0; i < other.directory.size(); ++i) {
+            if (other.directory[i] && bucketMap.find(other.directory[i]) == bucketMap.end()) {
+                newBuckets[i] = new Bucket(*other.directory[i]);
+                bucketMap[other.directory[i]] = newBuckets[i];
+            }
+            directory[i] = bucketMap[other.directory[i]];
         }
     }
     return *this;
@@ -171,9 +191,15 @@ void ExtensibleHashTable::print() const {
 
             cout << i << ": " << directory[i] << " --> [";
             vector<int> keys = directory[i]->getKeys();
-            for (size_t j = 0; j < keys.size(); ++j) {
+            size_t j;
+            for (j = 0; j < keys.size(); ++j) {
                 if (j > 0) cout << ", ";
                 cout << keys[j];
+            }
+
+            for (int k = keys.size(); k < bucketSize; ++k) {
+                if (k == 0) cout << " - ";
+                else cout << ", - ";
             }
             cout << "] (" << directory[i]->getLocalDepth() << ")\n";
 
@@ -183,6 +209,9 @@ void ExtensibleHashTable::print() const {
                     printed[j] = true;
                 }
             }
+        }
+        else {
+            cout << i << ": " << directory[i] << " --> \n";
         }
     }
 }

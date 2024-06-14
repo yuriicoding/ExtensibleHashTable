@@ -30,6 +30,13 @@ int main() {
     hashTable.printCheck();
 
 
+    ExtensibleHashTable otherTable(2);
+    otherTable = hashTable;
+
+    otherTable.remove(30);
+    hashTable.print();
+    otherTable.print();
+
     // Test Insertions
     //cout << "Inserting values..." << endl;
     // for (int i = 0; i < 5; ++i) {
