@@ -1,35 +1,137 @@
 #include "ExtensibleHashTable.h"
 #include <iostream>
 #include <vector>
+#include <cassert>
 using namespace std;
 
+void testConstructors() {
+    // Test 1: Default construction
+    ExtensibleHashTable ht1(4);
+    assert(ht1.getGlobal() == 1); // assuming initial global depth starts at 1
+
+    // Test 2: Construction with a specific bucket size
+    ExtensibleHashTable ht2(10);
+    assert(ht2.getGlobal() == 1);
+
+    // Test 3: Copy constructor
+    ht1.insert(1);
+    ht1.insert(2);
+    ExtensibleHashTable ht3(ht1);
+    assert(ht3.find(1) && ht3.find(2));
+
+    std::cout << "Constructor tests passed." << std::endl;
+}
+
+void testAssignmentOperator() {
+    // Assignment to an empty hash table
+    ExtensibleHashTable ht1(2), ht2(2);
+    ht1.insert(1);
+    ht1.insert(2);
+    ht2 = ht1;
+    assert(ht2.find(1) && ht2.find(2));
+
+    // Self-assignment
+    ht1 = ht1;
+    assert(ht1.find(1) && ht1.find(2));
+
+    std::cout << "Assignment operator tests passed." << std::endl;
+}
+
+void testInsert() {
+    // Insert into an empty hash table
+    ExtensibleHashTable ht(4);
+    ht.insert(5);
+    assert(ht.find(5));
+
+    // Trigger a split
+    ht.insert(1);
+    ht.insert(3);
+    ht.insert(9);
+    ht.insert(17); // Assuming this triggers a split
+    assert(ht.find(17) && ht.getGlobal() > 1);
+
+    // Multiple directory doublings
+    for (int i = 2; i < 100; i += 9) {
+        ht.insert(i);
+    }
+    assert(ht.getGlobal() > 1);
+
+    std::cout << "Insert tests passed." << std::endl;
+}
+
+void testFind() {
+    ExtensibleHashTable ht(4);
+    ht.insert(10);
+    assert(ht.find(10));
+    assert(!ht.find(11));
+
+    std::cout << "Find tests passed." << std::endl;
+}
+
+void testRemove() {
+    ExtensibleHashTable ht(4);
+    ht.insert(20);
+    ht.insert(21);
+    assert(ht.remove(20));
+    assert(!ht.find(20));
+    assert(!ht.remove(100)); // Trying to remove a non-existent key
+
+    std::cout << "Remove tests passed." << std::endl;
+}
+
+void testDoubleSplitAndDuplicates() {
+    // Test specific for double splits and duplicate handling
+    ExtensibleHashTable ht(2);
+    ht.insert(3);
+    ht.insert(3);
+    try
+    {
+        ht.insert(3); // This should not be allowed more than the bucket size
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+    }
+    ht.insert(11);
+    ht.insert(19); // This should cause double splits
+
+    assert(ht.getGlobal() > 1);
+    assert(ht.find(3) && ht.find(11) && ht.find(19));
+    assert(ht.remove(3) && !ht.remove(3)); // Removing all 3's
+
+    std::cout << "Double split and duplicate tests passed." << std::endl;
+}
+
+
+
 int main() {
-    ExtensibleHashTable hashTable(2);  // Initialize with bucket size of 4
+
+    testConstructors();
+    testAssignmentOperator();
+    testInsert();
+    testFind();
+    testRemove();
+    testDoubleSplitAndDuplicates();
+    std::cout << "Automatic tests passed." << std::endl;
+
+    cout << endl << "------------------------------------------------------" << endl << endl;
+
+    ExtensibleHashTable hashTable(2);
 
     //Special test for double split, that happens after 30 is inserted
     hashTable.insert(1);
-    cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
     hashTable.insert(5);
-    cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
     hashTable.insert(13);
-    cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
     hashTable.insert(29);
-    cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
     hashTable.insert(28);
-    cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
     hashTable.insert(20);
-    cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
     hashTable.insert(30);
     cout << "Global depth: " << hashTable.getGlobal() << endl;
-    hashTable.printCheck();
+    hashTable.print();
 
+    cout << endl << "------------------------------------------------------" << endl << endl;
 
+    //Assignment operator test
     ExtensibleHashTable otherTable(2);
     otherTable = hashTable;
 
@@ -37,58 +139,16 @@ int main() {
     hashTable.print();
     otherTable.print();
 
-    // Test Insertions
-    //cout << "Inserting values..." << endl;
-    // for (int i = 0; i < 5; ++i) {
-    //     hashTable.insert(i);
-    // }
-    // // Print current state of the hash table
-    // hashTable.print();
-    // cout << "----------------------------------------" << endl;
+    cout << endl << "------------------------------------------------------" << endl << endl;
 
-    // // Test Find
-    // cout << "Testing find operation:" << endl;
-    // vector<int> testKeys = {0, 5, 30, 95, 100};  // 100 should not be found
-    // for (int key : testKeys) {
-    //     cout << "Finding " << key << ": " << (hashTable.find(key) ? "Found" : "Not Found") << endl;
-    // }
+    //Copy constructor test
+    ExtensibleHashTable anotherTable(hashTable);
 
-    // // Test Removals
-    // cout << "Testing remove operation:" << endl;
-    // vector<int> removeKeys = {0, 25, 95, 100};  // Remove a mix of existing and non-existing keys
-    // for (int key : removeKeys) {
-    //     cout << "Removing " << key << ": " << (hashTable.remove(key) ? "Removed" : "Not Found") << endl;
-    // }
+    anotherTable.remove(28);
+    hashTable.print();
+    anotherTable.print();
 
-    // // Print state after removals
-    // hashTable.print();
-    // cout << "----------------------------------------" << endl;
 
-    // // Test inserting after removals to see if freed space is reused
-    // cout << "Inserting 101 and 102..." << endl;
-    // cout << "Global depth: " << hashTable.getGlobal() << endl;
-    // cout << "----------------------------------------" << endl;
-    // hashTable.insert(101);
-    // cout << "Global depth: " << hashTable.getGlobal() << endl;
-    // hashTable.print();
-    // cout << "----------------------------------------" << endl;
-    // hashTable.insert(102);
-    // cout << "Global depth: " << hashTable.getGlobal() << endl;
-    // hashTable.print();
-    // cout << "----------------------------------------" << endl;
-
-    // // Edge Case Testing
-    // cout << "Edge cases testing:" << endl;
-    // try {
-    //     // Inserting duplicates
-    //     hashTable.insert(10);
-    //     hashTable.insert(10);
-    //     cout << "Inserted duplicate 10." << endl;
-    // } catch (const runtime_error& e) {
-    //     cout << "Caught runtime error as expected with message: " << e.what() << endl;
-    // }
-
-    // hashTable.printCheck();
 
     return 0;
 }

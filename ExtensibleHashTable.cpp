@@ -1,11 +1,19 @@
 #include "ExtensibleHashTable.h"
-#include <iostream>
-#include <cmath>
 #include <stdexcept>
 #include <bitset>
 #include <algorithm>
-#include <unordered_map>
+#include <cmath>
+#include <iostream>
 using namespace std;
+
+ExtensibleHashTable::ExtensibleHashTable()
+    : globalDepth(1), bucketSize(4) {
+    directory.resize(2);
+    directory[0] = new Bucket(bucketSize);
+    directory[1] = new Bucket(bucketSize);
+
+};
+
 
 ExtensibleHashTable::ExtensibleHashTable(int bucketSize)
     : globalDepth(1), bucketSize(bucketSize) {
@@ -40,21 +48,32 @@ void ExtensibleHashTable::clearDirectory(){
 
 
 
-ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other){
+ExtensibleHashTable::ExtensibleHashTable(const ExtensibleHashTable& other) {
+
     directory.resize(other.directory.size(), nullptr);
     globalDepth = other.globalDepth;
     bucketSize = other.bucketSize;
-    
+
     vector<Bucket*> newBuckets(other.directory.size(), nullptr);
 
-    unordered_map<Bucket*, Bucket*> bucketMap;
 
     for (size_t i = 0; i < other.directory.size(); ++i) {
-        if (other.directory[i] && bucketMap.find(other.directory[i]) == bucketMap.end()) {
-            newBuckets[i] = new Bucket(*other.directory[i]);
-            bucketMap[other.directory[i]] = newBuckets[i];
+        if (other.directory[i]) {
+
+            bool alreadyCopied = false;
+            for (size_t j = 0; j < i; ++j) {
+                if (other.directory[i] == other.directory[j] && newBuckets[j] != nullptr) {
+                    newBuckets[i] = newBuckets[j];
+                    alreadyCopied = true;
+                    break;
+                }
+            }
+
+            if (!alreadyCopied) {
+                newBuckets[i] = new Bucket(*other.directory[i]);
+            }
         }
-        directory[i] = bucketMap[other.directory[i]];
+        directory[i] = newBuckets[i];
     }
 }
 
@@ -71,17 +90,27 @@ ExtensibleHashTable& ExtensibleHashTable::operator=(const ExtensibleHashTable& o
         directory.resize(other.directory.size(), nullptr);
         globalDepth = other.globalDepth;
         bucketSize = other.bucketSize;
-        
+
         vector<Bucket*> newBuckets(other.directory.size(), nullptr);
 
-        unordered_map<Bucket*, Bucket*> bucketMap;
 
         for (size_t i = 0; i < other.directory.size(); ++i) {
-            if (other.directory[i] && bucketMap.find(other.directory[i]) == bucketMap.end()) {
-                newBuckets[i] = new Bucket(*other.directory[i]);
-                bucketMap[other.directory[i]] = newBuckets[i];
+            if (other.directory[i]) {
+
+                bool alreadyCopied = false;
+                for (size_t j = 0; j < i; ++j) {
+                    if (other.directory[i] == other.directory[j] && newBuckets[j] != nullptr) {
+                        newBuckets[i] = newBuckets[j];
+                        alreadyCopied = true;
+                        break;
+                    }
+                }
+                
+                if (!alreadyCopied) {
+                    newBuckets[i] = new Bucket(*other.directory[i]);
+                }
             }
-            directory[i] = bucketMap[other.directory[i]];
+            directory[i] = newBuckets[i];
         }
     }
     return *this;
@@ -99,17 +128,22 @@ void ExtensibleHashTable::insert(int key) {
     int index = hash(key);
     Bucket* targetBucket = directory[index];
 
-    if (!targetBucket->isFull()) {
-        targetBucket->insertKey(key);
-        return;
+    if (targetBucket->calculateOccurence(key) == bucketSize){
+        throw runtime_error("Trying to insert number of duplicate keys greater than size of the bucket! Aborting insertion!");
     }
+    else{
+        if (!targetBucket->isFull()) {
+            targetBucket->insertKey(key);
+            return;
+        }
 
-    if (targetBucket->getLocalDepth() == globalDepth) {
-        doubleDirectory();
-    }
-    splitBucket(index);
+        if (targetBucket->getLocalDepth() == globalDepth) {
+            doubleDirectory();
+        }
+        splitBucket(index);
 
-    insert(key); //retry insersion recursively
+        insert(key); //retry insersion recursively
+    }  
 }
 
 

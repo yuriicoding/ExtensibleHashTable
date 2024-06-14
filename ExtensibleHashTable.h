@@ -17,8 +17,10 @@ private:
     void doubleDirectory();
     void clearDirectory();
     
+    
 public:
-    ExtensibleHashTable(int bucketSize = 4);
+    ExtensibleHashTable();
+    ExtensibleHashTable(int bucketSize);
     ExtensibleHashTable(const ExtensibleHashTable& other);
     ExtensibleHashTable& operator=(const ExtensibleHashTable& other);
     ~ExtensibleHashTable();
@@ -27,11 +29,9 @@ public:
     void insert(int key);
     bool remove(int key);
     void print() const;
-
+    
     void printCheck() const;
     int getGlobal() const;
-
-
 };
 
 

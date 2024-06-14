@@ -1,5 +1,4 @@
 #include "Bucket.h"
-#include <algorithm>
 using namespace std;
 
 Bucket::Bucket(int size) : localDepth(1), bucketSize(size) {};
@@ -74,6 +73,20 @@ vector<int> Bucket::getKeys() const {
     return keys;
 }
 
+
+
 int Bucket::getBucketSize() const {
     return keys.size();
+}
+
+
+int Bucket::calculateOccurence(int key) const{
+    int occurencesNumber = 0;
+
+    for (int value : keys){
+        if (value == key){
+            occurencesNumber++;
+        }
+    }
+    return occurencesNumber;
 }

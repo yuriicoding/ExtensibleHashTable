@@ -2,6 +2,7 @@
 #define BUCKET_H
 
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 class Bucket {
@@ -18,6 +19,7 @@ public:
     int getBucketSize() const;
     void increaseDepth();
     vector<int> getKeys() const;
+    int calculateOccurence(int key) const;
 
 private:
     vector<int> keys;
